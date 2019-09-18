@@ -1,7 +1,7 @@
 # Личный проект «Кексобукинг» [![Build status][travis-image]][travis-url]
 
 * Студент: [Никита Ильюков](https://up.htmlacademy.ru/javascript/18/user/310159).
-* Наставник: `Неизвестно`.
+* Наставник: `Олег Анисимов`.
 
 ---
 
