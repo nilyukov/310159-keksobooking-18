@@ -8,12 +8,14 @@ var COUNT_DESCRIPTIONS = 8;
 var WIDTH_MAP = document.querySelector('.map').clientWidth;
 var PIN_Y_MIN = 130;
 var PIN_Y_MAX = 630;
+var PIN_HEIGHT = 70;
+var PIN_WIDTH = 50;
 
 var generateRandomOffers = function () {
   var descriptions = [];
   for (var i = 0; i < COUNT_DESCRIPTIONS; i++) {
-    var pinX = Math.floor(Math.random() * (WIDTH_MAP + 1));
-    var pinY = Math.floor(Math.random() * (PIN_Y_MAX + 1 - PIN_Y_MIN) + PIN_Y_MIN);
+    var pinX = Math.floor(Math.random() * (WIDTH_MAP + 1)) - PIN_WIDTH / 2;
+    var pinY = Math.floor(Math.random() * (PIN_Y_MAX + 1 - PIN_Y_MIN) + PIN_Y_MIN) - PIN_HEIGHT;
 
     descriptions.push({
       author: {
@@ -46,10 +48,9 @@ var renderPin = function (descriptionPin) {
   var pinTemplate = document.querySelector('#pin').content.querySelector('.map__pin');
   var pinElement = pinTemplate.cloneNode(true);
   var pinImg = pinElement.querySelector('img');
-  var pinImgWidth = pinImg.width;
-  var pinImgHeight = pinImg.height;
-  pinElement.style.left = descriptionPin.location.x - pinImgWidth / 2 + 'px';
-  pinElement.style.top = descriptionPin.location.y - pinImgHeight + 'px';
+
+  pinElement.style.left = descriptionPin.location.x + 'px';
+  pinElement.style.top = descriptionPin.location.y + 'px';
   pinImg.alt = descriptionPin.offer.title;
   pinImg.src = descriptionPin.author.avatar;
   return pinElement;
@@ -65,6 +66,7 @@ var fillMap = function () {
   }
   listElement.appendChild(fragment);
 };
+
 
 document.querySelector('.map').classList.remove('map--faded');
 fillMap();
