@@ -46,7 +46,7 @@ var generateRandomOffers = function () {
 
     descriptions.push({
       author: {
-        avatar: 'img/avatars/user0' + (i + 1) + '.png',
+        avatar: 'img/avatars/user0' + (i + 1) + '.png'
       },
       offer: {
         title: 'заголовок предложения',
@@ -59,12 +59,12 @@ var generateRandomOffers = function () {
         checkout: CHECKOUT[Math.floor(Math.random() * CHECKOUT.length)],
         features: getArrayRandomLength(FEATURES),
         description: 'description',
-        photos: getArrayRandomLength(PHOTOS),
+        photos: getArrayRandomLength(PHOTOS)
       },
       location: {
         x: pinX,
-        y: pinY,
-      },
+        y: pinY
+      }
     });
   }
   return descriptions;
