@@ -11,6 +11,7 @@ var PIN_Y_MAX = 630;
 var PIN_HEIGHT = 70;
 var PIN_WIDTH = 50;
 var ENTER_KEYCODE = 13;
+var ESC_KEYCODE = 27;
 
 var mainPin = document.querySelector('.map__pin--main');
 
@@ -46,7 +47,7 @@ var generateRandomOffers = function () {
 
     descriptions.push({
       author: {
-        avatar: 'img/avatars/user0' + (i + 1) + '.png'
+        avatar: 'img/avatars/user0' + (i + 1) + '.png',
       },
       offer: {
         title: 'заголовок предложения',
@@ -59,12 +60,12 @@ var generateRandomOffers = function () {
         checkout: CHECKOUT[Math.floor(Math.random() * CHECKOUT.length)],
         features: getArrayRandomLength(FEATURES),
         description: 'description',
-        photos: getArrayRandomLength(PHOTOS)
+        photos: getArrayRandomLength(PHOTOS),
       },
       location: {
         x: pinX,
-        y: pinY
-      }
+        y: pinY,
+      },
     });
   }
   return descriptions;
@@ -175,6 +176,56 @@ var activatePage = function (evt) {
   removeDisabled(adForm);
   setAddress(mainPinX, mainPinY);
   fillMap(evt);
+
+  var cards = document.querySelectorAll('.map__card.popup');
+  for (var i = 0; i < cards.length; i++) {
+    cards[i].classList.add('hidden');
+    var cardCloseBtn = cards[i].querySelector('.popup__close');
+    var cardOpenBtn = cards[i].previousElementSibling;
+
+    cardCloseBtn.addEventListener('click', function (evt1) {
+      closePopupCard(evt1);
+    });
+
+    cardCloseBtn.addEventListener('keydown', popupEscPressHandler);
+
+    cardOpenBtn.addEventListener('click', function (evt1) {
+      openPopupCard(evt1);
+      document.addEventListener('keydown', popupEscPressHandler);
+    });
+
+    cardOpenBtn.addEventListener('keydown', popupEnterPressHandler);
+  }
+};
+
+var popupEscPressHandler = function (evt) {
+  if (evt.keyCode === ESC_KEYCODE) {
+    closePopupCard();
+  }
+};
+
+var popupEnterPressHandler = function (evt) {
+  if (evt.keyCode === ENTER_KEYCODE) {
+    openPopupCard(evt);
+  }
+};
+
+var hideOpenedCard = function () {
+  var openedCard = document.querySelector('.map__card.popup:not(.hidden)');
+  if (openedCard) {
+    openedCard.classList.add('hidden');
+  }
+};
+
+var closePopupCard = function () {
+  hideOpenedCard();
+  document.removeEventListener('keydown', popupEnterPressHandler);
+};
+
+var openPopupCard = function (evt) {
+  hideOpenedCard();
+  evt.target.closest('button').nextElementSibling.classList.remove('hidden');
+  document.addEventListener('keydown', popupEscPressHandler);
 };
 
 var timeInChangeHandler = function (evt) {
