@@ -60,7 +60,6 @@
     }
   };
 
-
   var fillMap = function (evt) {
     if (evt.currentTarget.dataset.triggered) {
       return;
