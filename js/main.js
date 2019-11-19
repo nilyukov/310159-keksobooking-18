@@ -183,9 +183,7 @@ var activatePage = function (evt) {
     var cardCloseBtn = cards[i].querySelector('.popup__close');
     var cardOpenBtn = cards[i].previousElementSibling;
 
-    cardCloseBtn.addEventListener('click', function (evt1) {
-      closePopupCard(evt1);
-    });
+    cardCloseBtn.addEventListener('click', closePopupCard);
 
     cardCloseBtn.addEventListener('keydown', popupEscPressHandler);
 
@@ -224,7 +222,11 @@ var closePopupCard = function () {
 
 var openPopupCard = function (evt) {
   hideOpenedCard();
-  evt.target.closest('button').nextElementSibling.classList.remove('hidden');
+  var mapCard = evt.currentTarget.nextElementSibling;
+  var mapPin = evt.currentTarget;
+  if (mapPin !== null) {
+    mapCard.classList.remove('hidden');
+  }
   document.addEventListener('keydown', popupEscPressHandler);
 };
 
