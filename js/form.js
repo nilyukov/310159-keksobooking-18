@@ -2,11 +2,14 @@
 
 (function () {
   var selectType = document.querySelector('#type');
+  var inputTitle = document.querySelector('#title');
   var inputPrice = document.querySelector('#price');
+  var textareaDescription = document.querySelector('#description');
   var timeIn = document.querySelector('#timein');
   var timeOut = document.querySelector('#timeout');
   var roomNumber = document.querySelector('#room_number');
   var capacity = document.querySelector('#capacity');
+
 
   var timeInChangeHandler = function (evt) {
     timeOut.value = evt.target.value;
@@ -119,5 +122,46 @@
 
   setPriceValidityByType(inputPrice, selectType);
   setCapacityValidityByType(capacity);
+
+  var succesHandler = function () {
+    inputTitle.value = '';
+    inputPrice.value = '';
+    textareaDescription.value = '';
+    window.util.adForm.classList.add('ad-form--disabled');
+    window.map.defaultMap();
+    window.util.addDisabled(window.util.filtersForm);
+    window.util.addDisabled(window.util.adForm);
+
+    var successTemplate = document.querySelector('#success').content.querySelector('.success');
+    var successElement = successTemplate.cloneNode(true);
+    document.querySelector('main').insertAdjacentElement('afterbegin', successElement);
+    document.addEventListener('keydown', successEscPressHandler);
+    document.addEventListener('click', clickDocumentHandler);
+  };
+
+  var successEscPressHandler = function (evt) {
+    if (evt.keyCode === window.util.ESC_KEYCODE) {
+      closeSuccessMessage();
+    }
+  };
+
+  var clickDocumentHandler = function (evt) {
+    var successMsg = document.querySelector('.success__message');
+    if (evt.target !== successMsg) {
+      closeSuccessMessage();
+    }
+  };
+
+  var closeSuccessMessage = function () {
+    var success = document.querySelector('.success');
+    success.remove();
+    document.removeEventListener('keydown', successEscPressHandler);
+    document.removeEventListener('click', clickDocumentHandler);
+  };
+
+  window.util.adForm.addEventListener('submit', function (evt) {
+    window.backend.save(new FormData(window.util.adForm), succesHandler, window.util.errorHandler);
+    evt.preventDefault();
+  });
 
 })();
