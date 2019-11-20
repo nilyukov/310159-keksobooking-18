@@ -67,10 +67,9 @@
     evt.currentTarget.dataset.triggered = true;
     var listElement = document.querySelector('.map__pins');
     var fragment = document.createDocumentFragment();
-    var descriptionOffers = window.data.generateRandomOffers();
     for (var i = 0; i < window.data.COUNT_DESCRIPTIONS; i++) {
-      fragment.appendChild(window.pin.renderPin(descriptionOffers[i]));
-      fragment.appendChild(window.card.renderCard(descriptionOffers[i]));
+      fragment.appendChild(window.pin.renderPin(window.data.offers[i]));
+      fragment.appendChild(window.card.renderCard(window.data.offers[i]));
     }
     listElement.appendChild(fragment);
   };
