@@ -2,8 +2,6 @@
 
 (function () {
   var mainPin = document.querySelector('.map__pin--main');
-  var filters = document.querySelector('.map__filters');
-  var adForm = document.querySelector('.ad-form');
   var address = document.querySelector('#address');
   var MAP = document.querySelector('.map');
   var MAIN_PIN_WIDTH = mainPin.clientWidth;
@@ -13,8 +11,6 @@
   var PIN_Y_MAX = 630;
   var PIN_X_MIN = 0 - MAIN_PIN_WIDTH / 2;
   var PIN_X_MAX = MAP.clientWidth - MAIN_PIN_WIDTH / 2;
-  var ENTER_KEYCODE = 13;
-  var ESC_KEYCODE = 27;
   var IS_ACTIVE_PAGE = true;
 
   var setAddressMainPinCoordinates = function (active) {
@@ -24,24 +20,11 @@
     address.value = (active) ? mainPinX + ', ' + mainPinY : mainPinX + ', ' + mainPinDisabledY;
   };
 
-
-  var addDisabled = function (parent) {
-    for (var i = 0; i < parent.children.length; i++) {
-      parent.children[i].setAttribute('disabled', 'disabled');
-    }
-  };
-
-  var removeDisabled = function (parent) {
-    for (var i = 0; i < parent.children.length; i++) {
-      parent.children[i].removeAttribute('disabled');
-    }
-  };
-
   var activatePage = function (evt) {
     document.querySelector('.map').classList.remove('map--faded');
-    adForm.classList.remove('ad-form--disabled');
-    removeDisabled(filters);
-    removeDisabled(adForm);
+    window.util.adForm.classList.remove('ad-form--disabled');
+    window.util.removeDisabled(window.util.filtersForm);
+    window.util.removeDisabled(window.util.adForm);
     setAddressMainPinCoordinates(IS_ACTIVE_PAGE);
     fillMap(evt);
 
@@ -64,25 +47,38 @@
     }
   };
 
-  var fillMap = function (evt) {
-    if (evt.currentTarget.dataset.triggered) {
-      return;
-    }
-    evt.currentTarget.dataset.triggered = true;
+  var renderMap = function () {
     var listElement = document.querySelector('.map__pins');
     var fragment = document.createDocumentFragment();
-    for (var i = 0; i < window.data.COUNT_DESCRIPTIONS; i++) {
-      fragment.appendChild(window.pin.renderPin(window.data.offers[i]));
-      fragment.appendChild(window.card.renderCard(window.data.offers[i]));
+    var offers = window.data.offers;
+    for (var j = 0; j < window.util.COUNT_OFFERS; j++) {
+      fragment.appendChild(window.pin.renderPin(offers[j]));
+      fragment.appendChild(window.card.renderCard(offers[j]));
     }
     listElement.appendChild(fragment);
   };
 
+  var fillMap = function (evt) {
+    if (evt.currentTarget.dataset.triggered) {
+      var pins = document.querySelectorAll('.map__pin.hidden');
+      if (pins) {
+        for (var i = 0; i < pins.length; i++) {
+          pins[i].classList.remove('hidden');
+        }
+      }
+      return;
+    }
+    renderMap();
+    evt.currentTarget.dataset.triggered = true;
+
+  };
+
   mainPin.addEventListener('keydown', function (evt) {
-    if (evt.keyCode === ENTER_KEYCODE) {
+    if (evt.keyCode === window.util.ENTER_KEYCODE) {
       activatePage(evt);
     }
   });
+
 
   mainPin.addEventListener('mousedown', function (evt) {
     activatePage(evt);
@@ -155,13 +151,13 @@
   });
 
   var popupEscPressHandler = function (evt) {
-    if (evt.keyCode === ESC_KEYCODE) {
+    if (evt.keyCode === window.util.ESC_KEYCODE) {
       closePopupCard();
     }
   };
 
   var popupEnterPressHandler = function (evt) {
-    if (evt.keyCode === ENTER_KEYCODE) {
+    if (evt.keyCode === window.util.ENTER_KEYCODE) {
       openPopupCard(evt);
     }
   };
@@ -188,7 +184,27 @@
     document.addEventListener('keydown', popupEscPressHandler);
   };
 
-  addDisabled(filters);
-  addDisabled(adForm);
+  window.util.addDisabled(window.util.filtersForm);
+  window.util.addDisabled(window.util.adForm);
   setAddressMainPinCoordinates();
+
+  var startPositionX = mainPin.offsetLeft;
+  var startPositionY = mainPin.offsetTop;
+  var setStartCoords = function () {
+    mainPin.style.left = startPositionX + 'px';
+    mainPin.style.top = startPositionY + 'px';
+    setAddressMainPinCoordinates();
+  };
+
+  window.map = {
+    defaultMap: function () {
+      setStartCoords();
+      document.querySelector('.map').classList.add('map--faded');
+      hideOpenedCard();
+      var pins = document.querySelectorAll('.map__pin:not(.map__pin--main)');
+      for (var i = 0; i < pins.length; i++) {
+        pins[i].classList.add('hidden');
+      }
+    },
+  };
 })();
